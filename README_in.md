@@ -8,7 +8,7 @@ In this repository, you will find three data processing folders:
 Each of these data frames was processed using Python, most using the Pandas library.
 
 
-The Databruin environment was also used to facilitate data processing, making it user-friendly for those without extensive knowledge of Python.(https://databruin.com)
+The Databruin environment was also used to facilitate data processing, making it user-friendly for those without extensive knowledge of Python. (https://databruin.com)
 
 
 In this case, two of the data processing tasks (Crusher and Reboiler Raw Data) were processed. Once the processing was complete, the code was extracted and then debugged with AI and executed in Visual Studio Code.
