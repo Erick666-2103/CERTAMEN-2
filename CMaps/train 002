@@ -1,0 +1,45 @@
+import numpy as np 
+import pandas as pd
+import sklearn
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+fd_002 = pd.read_csv('train_FD002.txt', sep=" ", header= None)
+
+fd_002.drop(columns=[26,27],inplace=True)
+columns = ['unit_number', 'time_in_cycles','setting_1','setting_2','TRA','T2','T24','T30','T50','P2','P15','P30','NF','Nc','epr','Ps30','phi','NRf','NRc','BPR','farB','htBleed','Nf_dmd','PCNfR_dmd','W31','W32']
+fd_002.columns = columns 
+
+def prepare_train_data(data, factor = 0):
+# Hacer una copia del DataFrame original para evitar cambios en el DataFrame original
+    df = data.copy()
+
+# Agrupar por 'unit_number' y encontrar el máximo 'time_in_cycles' para cada grupo
+# reset_index() se usa para convertir 'unit_number' de un índice a una columna
+    fd_RUL = df.groupby('unit_number')['time_in_cycles'].max().reset_index()
+
+# Cambiar el nombre de la columna 'time_in_cycles' a 'max'
+    fd_RUL.rename(columns = {'time_in_cycles':'max'}, inplace = True)
+
+# Combinar el DataFrame original con fd_RUL basado en 'unit_number'
+# Esto agrega la columna 'max' al DataFrame original
+    df = df.merge(fd_RUL, on=['unit_number'], how='left')
+
+# Calcular la columna 'RUL' como la diferencia entre 'max' y 'time_in_cycles'
+    df ['RUL'] = df['max'] - df['time_in_cycles']
+
+# Eliminar la columna 'max' ya que ya no es necesaria
+    df.drop(columns=['max'],inplace = True)
+
+# Devolver solo las filas donde 'time_in_cycles' es mayor que el factor dado
+    return df[df['time_in_cycles'] > factor]
+
+df = prepare_train_data(fd_002)
+
+#Veamos cada campaña
+plt.figure(figsize=(20,6))
+df.unit_number.value_counts().plot.bar()
+plt.xlabel('Id simulado')
+plt.ylabel('Cantidad de puntos')
+plt.title('Grafico Train 002')
+plt.show()
